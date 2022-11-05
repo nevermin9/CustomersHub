@@ -76,13 +76,13 @@ const combinator = ref('');
 
 
 const getData = () => {
+    // add caching
     return allData.value;
 }
 
 const handleData = () => {
     // cache result;
     // CACHE
-    // let customers = getCustomers();
     let data = getData();
     if (isDistinct.value && selectedColumns.value.length) {
         data = makeDistinct([...data]);
@@ -138,6 +138,7 @@ const makeSearch = (data) => {
 
                 if ((isInverted && !$item[condCol].startsWith(condVal))
                     || (!condition.isInverted && $item[condCol].startsWith(condVal))) {
+                        // cache hear
                     return $item;
                 }
 
