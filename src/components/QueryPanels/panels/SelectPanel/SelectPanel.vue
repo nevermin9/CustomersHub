@@ -15,11 +15,9 @@ import Dropdown from 'primevue/dropdown'
 import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
 import QueryRepresentation from '@/components/QueryPanels/components/QueryRepresentation.vue';
-import debounce from 'lodash.debounce'
 import ConditionRow from '@/components/QueryPanels/helpers/ConditionRow';
 
 const {
-    displayableData,
     displayableColumns,
     setDisplayableData,
     setDisplayableColumns,
