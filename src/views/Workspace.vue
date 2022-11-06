@@ -22,6 +22,13 @@ const {
 } = useCustomers();
 
 const PER_PAGE = 10;
+const {
+    paginatedData,
+    loadPaginatedData,
+    isLoading,
+} = usePaginationImitator(displayableCustomers, {
+    perPage: PER_PAGE,
+})
 
 provide(QUERY_PANEL_KEY, new QueryPanelProvide({
     displayableColumns,
@@ -30,16 +37,13 @@ provide(QUERY_PANEL_KEY, new QueryPanelProvide({
     setDisplayableData: setDisplayableCustomers,
     allData: allCustomers,
     allColumns,
+    startLoading() {
+        isLoading.value = true;
+    },
+    finishLoading() {
+        isLoading.value = false;
+    }
 }));
-
-
-const {
-    paginatedData,
-    loadPaginatedData,
-    isLoading,
-} = usePaginationImitator(displayableCustomers, {
-    perPage: PER_PAGE,
-})
 
 const onPage = (event) => {
     return loadPaginatedData(event.first);

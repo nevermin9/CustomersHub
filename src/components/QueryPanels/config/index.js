@@ -8,6 +8,8 @@ export class QueryPanelProvide {
         setDisplayableData,
         allData,
         allColumns,
+        startLoading,
+        finishLoading
     }) {
         this.displayableColumns = displayableColumns
         this.displayableData = displayableData
@@ -15,5 +17,7 @@ export class QueryPanelProvide {
         this.setDisplayableData = setDisplayableData
         this.allData = allData
         this.allColumns = allColumns
+        this.startLoading = startLoading
+        this.finishLoading = finishLoading
     }
 }

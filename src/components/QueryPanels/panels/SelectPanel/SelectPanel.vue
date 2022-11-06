@@ -5,6 +5,7 @@ import {
     inject,
     ref,
     reactive,
+    toRaw,
 } from 'vue'
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
@@ -15,7 +16,14 @@ import Dropdown from 'primevue/dropdown'
 import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
 import QueryRepresentation from '@/components/QueryPanels/components/QueryRepresentation.vue';
-import ConditionRow from '@/components/QueryPanels/helpers/ConditionRow';
+import ConditionRow from '@/components/QueryPanels/helpers/condition-row';
+import { makeSearch, makeDistinct } from '@/components/QueryPanels/workers/functions'
+import MakeSearchWorker from '@/components/QueryPanels/workers/make-search.worker.js?worker'
+import MakeDistinctWorker from '@/components/QueryPanels/workers/make-distinct.worker.js?worker'
+import { createSafeWorker } from '@/workers'
+
+const makeSearchWorker = createSafeWorker(MakeSearchWorker, makeSearch)
+const makeDistinctWorker = createSafeWorker(MakeDistinctWorker, makeDistinct)
 
 const {
     displayableColumns,
@@ -23,7 +31,14 @@ const {
     setDisplayableColumns,
     allData,
     allColumns,
+    startLoading,
+    finishLoading,
 } = inject(QUERY_PANEL_KEY);
+
+const getRawData = (refValue) => {
+    const rawData = JSON.parse(JSON.stringify(refValue.value));
+    return rawData;
+}
 
 const $selectedColumns = ref([]);
 const selectedColumns = computed({
@@ -40,6 +55,22 @@ const selectedColumns = computed({
         handleData();
     }
 });
+
+const sendWorkerToMakeDistinct = () => {
+    startLoading();
+    return new Promise((resolve) => {
+        const rawData = getRawData(allData);
+        const rawCols = getRawData(selectedColumns)
+        makeDistinctWorker.onmessage || (makeDistinctWorker.onmessage = (e) => {
+            finishLoading();
+            return resolve(e.data);
+        })
+        makeDistinctWorker.postMessage({
+            data: rawData,
+            cols: rawCols,
+        });
+    })
+}
 
 const $isDistinct = ref(false);
 const isDistinct = computed({
@@ -78,77 +109,33 @@ const getData = () => {
     return allData.value;
 }
 
-const handleData = () => {
-    // cache result;
-    // CACHE
+const handleData = async () => {
     let data = getData();
-    if (isDistinct.value && selectedColumns.value.length) {
-        data = makeDistinct([...data]);
+    if (isDistinct.value && selectedColumns.value.length
+        && displayableColumns.value.length !== allColumns.value.length) {
+        data = await sendWorkerToMakeDistinct();
     }
     if (conditions.length) {
-        data = makeSearch([...data]);
+        data = await sendWorkerToSearch();
     }
 
     setDisplayableData(data);
 }
 
-const makeDistinct = (data) => {
-    if (displayableColumns.value.length === allColumns.value.length) {
-        return data;
-    }
-
-    let result = [];
-    const values = [];
-
-    for (let i = 0; i < displayableColumns.value.length; i++) {
-        const col = displayableColumns.value[i];
-        const currentResult = [];
-
-        for (const item of data) {
-            const val = item[col];
-            if (values.indexOf(val) < 0) {
-                currentResult.push(item);
-                values.push(val)
-            }
-        }
-
-        if (currentResult.length >= result.length) {
-            result = currentResult;
-        }
-    }
-
-    return result;
-}
-
-const makeSearch = (data) => {
-    let result = [];
-
-    for (const group of conditions) {
-        const groupResult = [];
-
-        for (const item of data) {
-            const candidate = group.reduce(($item, condition) => {
-                if ($item === null) return null
-
-                const condCol = condition.column;
-                const condVal = condition.value;
-                const isInverted = condition.isInverted;
-
-                if ((isInverted && !$item[condCol].startsWith(condVal))
-                    || (!condition.isInverted && $item[condCol].startsWith(condVal))) {
-                        // cache here
-                    return $item;
-                }
-
-                return null;
-            }, item)
-
-            candidate && groupResult.push(candidate);
-        }
-        result = result.concat(groupResult)
-    }
-
-    return result;
+const sendWorkerToSearch = () => {
+    startLoading();
+    return new Promise((resolve) => {
+        const rawData = getRawData(allData)
+        const rawConditions = toRaw(conditions)
+        makeSearchWorker.onmessage || (makeSearchWorker.onmessage = (e) => {
+            finishLoading();
+            return resolve(e.data)
+        })
+        makeSearchWorker.postMessage({
+            data: [...rawData],
+            conditions: [...rawConditions],
+        });
+    })
 }
 
 const resetConditions = () => {
@@ -156,6 +143,7 @@ const resetConditions = () => {
     conditionCol.value = '';
     combinator.value = COMBINATORS.AND;
 }
+
 const addCondition = () => {
     const column = conditionCol.value;
     const value = conditionVal.value;
