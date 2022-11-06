@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue'
-import ConditionRaw from '@/components/QueryPanels/helpers/ConditionRow';
 
 const props = defineProps({
     cols: {
@@ -44,8 +43,7 @@ const getConditionStr = (condition) => {
                         v-for="(col, i) in displayedCols"
                         :key="i"
                     >
-                        {{ col }}
-                        <span v-if="i !== displayedCols.length - 1">,</span>
+                        {{ ` ${col}${i !== displayedCols.length - 1 ? ',' : ''}` }}
                     </span>
                 </tr>
             </tr>
@@ -62,8 +60,7 @@ const getConditionStr = (condition) => {
                         v-for="(condition, i) in firstGroup"
                         :key="i"
                     >
-                        {{ getConditionStr(condition) }}
-                        <span v-if="i !== firstGroup.length - 1">,</span>
+                        {{ ` ${getConditionStr(condition)}${i !== firstGroup.length - 1 ? ',' : ''}` }}
                     </span>
                 </tr>
             </tr>
@@ -83,8 +80,7 @@ const getConditionStr = (condition) => {
                                 v-for="(condition, i) in group"
                                 :key="i"
                             >
-                                {{ getConditionStr(condition) }}
-                                <span v-if="i !== firstGroup.length - 1">,</span>
+                                {{ ` ${getConditionStr(condition)}${i !== group.length - 1 ? ',' : ''}` }}
                             </span>
                         </p>
                     </tr>
