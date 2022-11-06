@@ -1,0 +1,1 @@
+export { usePaginationImitator } from './use-pagination-imitator'

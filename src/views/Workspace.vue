@@ -1,6 +1,5 @@
 <script setup>
 import {
-    ref,
     onMounted,
     provide,
 } from 'vue'
@@ -8,7 +7,8 @@ import { QUERY_PANEL_KEY } from '@/components/QueryPanels/config';
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import QueryPanelsVue from '@/components/QueryPanels/QueryPanels.vue';
-import { useCustomers } from '@/composition/customers/use-customers';
+import { useCustomers } from '@/composition/customers';
+import { usePaginationImitator } from '@/composition/pagination';
 
 const {
     loadCustomers,
@@ -18,7 +18,10 @@ const {
     setDisplayableCustomers,
     allCustomers,
     allColumns,
+    DATA_KEY,
 } = useCustomers();
+
+const PER_PAGE = 10;
 
 provide(QUERY_PANEL_KEY, {
     displayableColumns,
@@ -28,6 +31,19 @@ provide(QUERY_PANEL_KEY, {
     allData: allCustomers,
     allColumns,
 });
+
+
+const {
+    paginatedData,
+    loadPaginatedData,
+    isLoading,
+} = usePaginationImitator(displayableCustomers, {
+    perPage: PER_PAGE,
+})
+
+const onPage = (event) => {
+    return loadPaginatedData(event.first);
+}
 
 onMounted(async () => {
     await loadCustomers();
@@ -58,11 +74,18 @@ onMounted(async () => {
 
         <div v-if="displayableColumns.length">
             <DataTable
+                lazy
+                paginator
+                :rows="PER_PAGE"
+                :data-key="DATA_KEY"
+                :total-records="displayableCustomers.length"
+                :loading="isLoading"
                 show-gridlines
                 responsive-layout="scroll"
                 breakpoint="960px"
                 scroll-direction=""
-                :value="displayableCustomers"
+                :value="paginatedData"
+                @page="(event) => onPage(event)"
             >
                 <Column
                     v-for="(col, i) in displayableColumns"

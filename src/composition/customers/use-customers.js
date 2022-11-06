@@ -4,6 +4,7 @@ import Papa from 'papaparse'
 const PATH = '/customers.csv'
 
 export const useCustomers = () => {
+    const DATA_KEY = 'customerId'
     const allCustomers = ref([]);
     const allColumns = ref([]);
 
@@ -35,5 +36,6 @@ export const useCustomers = () => {
         setDisplayableColumns,
         displayableCustomers,
         setDisplayableCustomers,
+        DATA_KEY,
     }
 }
