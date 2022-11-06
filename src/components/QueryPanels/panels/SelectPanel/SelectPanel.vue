@@ -136,7 +136,7 @@ const makeSearch = (data) => {
 
                 if ((isInverted && !$item[condCol].startsWith(condVal))
                     || (!condition.isInverted && $item[condCol].startsWith(condVal))) {
-                        // cache hear
+                        // cache here
                     return $item;
                 }
 

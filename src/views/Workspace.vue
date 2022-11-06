@@ -3,7 +3,7 @@ import {
     onMounted,
     provide,
 } from 'vue'
-import { QUERY_PANEL_KEY } from '@/components/QueryPanels/config';
+import { QUERY_PANEL_KEY, QueryPanelProvide } from '@/components/QueryPanels/config';
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import QueryPanelsVue from '@/components/QueryPanels/QueryPanels.vue';
@@ -23,14 +23,14 @@ const {
 
 const PER_PAGE = 10;
 
-provide(QUERY_PANEL_KEY, {
+provide(QUERY_PANEL_KEY, new QueryPanelProvide({
     displayableColumns,
     displayableData: displayableCustomers,
     setDisplayableColumns,
     setDisplayableData: setDisplayableCustomers,
     allData: allCustomers,
     allColumns,
-});
+}));
 
 
 const {
