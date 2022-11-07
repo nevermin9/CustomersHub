@@ -61,10 +61,10 @@ const sendWorkerToMakeDistinct = () => {
     return new Promise((resolve) => {
         const rawData = getRawData(allData);
         const rawCols = getRawData(selectedColumns)
-        makeDistinctWorker.onmessage || (makeDistinctWorker.onmessage = (e) => {
+        makeDistinctWorker.onmessage = (e) => {
             finishLoading();
             return resolve(e.data);
-        })
+        }
         makeDistinctWorker.postMessage({
             data: rawData,
             cols: rawCols,
@@ -127,10 +127,10 @@ const sendWorkerToSearch = () => {
     return new Promise((resolve) => {
         const rawData = getRawData(allData)
         const rawConditions = toRaw(conditions)
-        makeSearchWorker.onmessage || (makeSearchWorker.onmessage = (e) => {
+        makeSearchWorker.onmessage = (e) => {
             finishLoading();
             return resolve(e.data)
-        })
+        }
         makeSearchWorker.postMessage({
             data: [...rawData],
             conditions: [...rawConditions],
