@@ -6,7 +6,10 @@ import 'primeflex/primeflex.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import PrimeVue from 'primevue/config'
+import Tooltip from 'primevue/tooltip';
 
-createApp(App)
+const app = createApp(App)
     .use(PrimeVue)
-    .mount('#app')
+app.directive('tooltip', Tooltip)
+
+app.mount('#app')

@@ -16,7 +16,8 @@ import Dropdown from 'primevue/dropdown'
 import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
 import QueryRepresentation from '@/components/QueryPanels/components/QueryRepresentation.vue';
-import ConditionRow from '@/components/QueryPanels/helpers/condition-row';
+import ConditionRow from '@/components/QueryPanels/models/condition-row';
+import { usePerformanceObserver } from '@/composition/performance';
 import { makeSearch, makeDistinct } from '@/components/QueryPanels/workers/functions'
 import MakeSearchWorker from '@/components/QueryPanels/workers/make-search.worker.js?worker'
 import MakeDistinctWorker from '@/components/QueryPanels/workers/make-distinct.worker.js?worker'
@@ -24,6 +25,13 @@ import { createSafeWorker } from '@/workers'
 
 const makeSearchWorker = createSafeWorker(MakeSearchWorker, makeSearch)
 const makeDistinctWorker = createSafeWorker(MakeDistinctWorker, makeDistinct)
+
+const PERF_MARK_NAME = 'select-panel';
+const {
+    measure,
+    result: measurementResult,
+    reset: resetMeasurementResult,
+} = usePerformanceObserver(PERF_MARK_NAME)
 
 const {
     displayableColumns,
@@ -113,10 +121,11 @@ const handleData = async () => {
     let data = getData();
     if (isDistinct.value && selectedColumns.value.length
         && displayableColumns.value.length !== allColumns.value.length) {
-        data = await sendWorkerToMakeDistinct();
+        data = await measure(sendWorkerToMakeDistinct)
     }
+
     if (conditions.length) {
-        data = await sendWorkerToSearch();
+        data = await measure(sendWorkerToSearch)
     }
 
     setDisplayableData(data);
@@ -171,6 +180,7 @@ const clear = () => {
     resetConditions();
     conditions.splice(0);
     handleData();
+    resetMeasurementResult();
 }
 </script>
 
@@ -182,7 +192,7 @@ const clear = () => {
             class="p-3"
         >
             <form class="flex flex-column">
-                <ul class="flex flex-column gap-2">
+                <ul class="flex flex-column gap-4">
                     <li class="flex align-items-center gap-2">
                         <MultiSelect
                             v-model="selectedColumns"
@@ -206,11 +216,7 @@ const clear = () => {
                         </div>
                     </li>
 
-                    <li class="flex flex-column">
-                        <h4>
-                            Make condition
-                        </h4>
-
+                    <li class="flex flex-column gap-2">
                         <div class="flex gap-2">
                             <div class="flex align-items-center gap-1">
                                 <label
@@ -255,13 +261,22 @@ const clear = () => {
 
                         </div>
 
-                        <div>
+                        <div class="flex gap-2 align-items-center">
                             <PrimeButton
                                 label="Add condition"
                                 @click="() => addCondition()"
                             />
-                        </div>
 
+                            <p>
+                                <span>
+                                    Last operation takes: 
+                                </span>
+
+                                <span>
+                                    {{ measurementResult }}
+                                </span>
+                            </p>
+                        </div>
                     </li>
                 </ul>
 

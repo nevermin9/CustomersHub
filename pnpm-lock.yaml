@@ -9,6 +9,7 @@ specifiers:
   sass: ^1.55.0
   vite: ^3.2.0
   vue: ^3.2.41
+  web-vitals: ^3.0.4
 
 dependencies:
   papaparse: 5.3.2
@@ -17,6 +18,7 @@ dependencies:
   primevue: 3.18.1_kh5bzrfss5xnipkeq4kl6iatom
   sass: 1.55.0
   vue: 3.2.41
+  web-vitals: 3.0.4
 
 devDependencies:
   '@vitejs/plugin-vue': 3.2.0_vite@3.2.2+vue@3.2.41
@@ -607,3 +609,7 @@ packages:
       '@vue/runtime-dom': 3.2.41
       '@vue/server-renderer': 3.2.41_vue@3.2.41
       '@vue/shared': 3.2.41
+
+  /web-vitals/3.0.4:
+    resolution: {integrity: sha512-Yau8qf1AJ/dm6MY180Bi0qpCIuWmAfKAnOqmxLecGfIHn0+ND3H4JOhXeY73Pyi9zjSF5J4SNUewHLNUzU7mmA==}
+    dev: false

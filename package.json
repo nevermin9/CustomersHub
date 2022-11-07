@@ -14,7 +14,8 @@
         "primeicons": "^6.0.1",
         "primevue": "^3.18.1",
         "sass": "^1.55.0",
-        "vue": "^3.2.41"
+        "vue": "^3.2.41",
+        "web-vitals": "^3.0.4"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^3.2.0",
