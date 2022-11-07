@@ -179,6 +179,7 @@ const addCondition = () => {
 const clear = () => {
     resetConditions();
     conditions.splice(0);
+    isDistinct.value = false;
     handleData();
     resetMeasurementResult();
 }
