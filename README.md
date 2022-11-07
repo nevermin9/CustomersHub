@@ -18,11 +18,6 @@ The general component here is `QueryPanels`. It is an independent smart componen
 - Usage of `computed` and `ref` objects because they are more safe in terms of the memory leak prevention.
 
 ### Average performance metrics
-To get metrics below, `web-vitals` npm package, Google DevTools & native PerformanceObserver are used 
-- *Largest Contentful Paint* - 150ms w/o throttling, 3s w/ Slow 3G, 500ms w/ CPU 6x slowdown
-- *First time to byte* - 30ms w/o throttling, 30ms w/ CPU 6x slowdown,
-- *First Input Delay* - 2ms w/o throttling, 2ms w/ CPU 6x slowdown
-- *WebWorkers* performance - 
 | Metric | w/o throttling | w/ Slow 3G | w/ CPU 6x slowdown |
 | ------ | ------ | ------ | ------ |
 | *Largest Contentful Paint* | 150ms | 3s | 500ms |
