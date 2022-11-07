@@ -18,6 +18,8 @@ The general component here is `QueryPanels`. It is an independent smart componen
 - Usage of `computed` and `ref` objects because they are more safe in terms of the memory leak prevention.
 
 ### Average performance metrics
+`web-vitals` & Chrome DevTools is used to measure page load time. PerformanceObservable is used to measure performance of the Web Workers.
+The user can see performance metrics during session (panel on the top of the website and performance of a SQL query next to the *Add condition* button.)
 | Metric | w/o throttling | w/ Slow 3G | w/ CPU 6x slowdown |
 | ------ | ------ | ------ | ------ |
 | *Largest Contentful Paint* | 150ms | 3s | 500ms |
