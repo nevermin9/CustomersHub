@@ -12,7 +12,7 @@ export const makeSearch = (eventData) => {
 
         for (const item of data) {
             const candidate = group.reduce(($item, condition) => {
-                if ($item === null) return null
+                if ($item === null || result.indexOf($item) >= 0) return null
 
                 const condCol = condition.column;
                 const condVal = condition.value;

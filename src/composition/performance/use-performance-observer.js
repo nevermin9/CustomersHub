@@ -1,7 +1,7 @@
-import { ref, effectScope, onScopeDispose } from 'vue';
+import { ref, onScopeDispose } from 'vue';
 
 export const usePerformanceObserver = (name, type = 'measure', format = true) => {
-    let observer = ref(null)
+    let observer = null
     const result = ref('0ms')
     const setResult = (entry) => {
         if (!format) {

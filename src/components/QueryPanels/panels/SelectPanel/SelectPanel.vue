@@ -221,6 +221,7 @@ const clear = () => {
                         <div class="flex gap-2">
                             <div class="flex align-items-center gap-1">
                                 <label
+                                    class="font-bold"
                                     v-if="conditions.length === 0"
                                     for="conditional-col"
                                 >
@@ -242,7 +243,7 @@ const clear = () => {
                                 />
                             </div>
 
-                            <div>
+                            <div class="flex align-items-center">
                                 <SelectButton
                                     v-model="isInverted"
                                     :options="INVERTED_OPTIONS"
@@ -268,7 +269,7 @@ const clear = () => {
                                 @click="() => addCondition()"
                             />
 
-                            <p>
+                            <p class="font-bold">
                                 <span>
                                     Last operation takes: 
                                 </span>
