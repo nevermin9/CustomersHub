@@ -1,5 +1,5 @@
 # CustomerHub
-(website)[https://customerhub-6e0c4.web.app/]
+[website](https://customerhub-6e0c4.web.app/)
 
 This application serves as an example of the UI for SQL.
 Currently supports only SELECT operation.
