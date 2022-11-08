@@ -22,12 +22,13 @@ export const usePerformanceObserver = (name, type = 'measure', format = true) =>
         observer.observe({ type, buffered: true })
     } catch(err) {}
 
-    const disconnectObserver = () => {
+    const dispose = () => {
         observer.disconnect();
+        observer = null;
     }
 
     onScopeDispose(() => {
-        disconnectObserver();
+        dispose();
     })
 
     const measure = async (fn) => {
