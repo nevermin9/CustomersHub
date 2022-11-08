@@ -10,23 +10,24 @@ export const makeSearch = (eventData) => {
     for (const group of conditions) {
         const groupResult = [];
 
+        dataLoop:
         for (const item of data) {
-            const candidate = group.reduce(($item, condition) => {
-                if ($item === null || result.indexOf($item) >= 0) return null
+            if (result.indexOf(item) >= 0) {
+                continue;
+            }
 
+            for (let i = 0; i < group.length; i++) {
+                const condition = group[i]
                 const condCol = condition.column;
                 const condVal = condition.value;
                 const isInverted = condition.isInverted;
 
-                if ((isInverted && !$item[condCol].startsWith(condVal))
-                    || (!condition.isInverted && $item[condCol].startsWith(condVal))) {
-                    return $item;
+                if ((!isInverted && !item[condCol].startsWith(condVal))
+                    || (isInverted && item[condCol].startsWith(condVal))) {
+                    continue dataLoop;
                 }
-
-                return null;
-            }, item)
-
-            candidate && groupResult.push(candidate);
+            }
+            groupResult.push(item);
         }
         result = result.concat(groupResult)
     }
