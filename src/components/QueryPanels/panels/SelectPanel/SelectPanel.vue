@@ -18,13 +18,13 @@ import InputText from 'primevue/inputtext';
 import QueryRepresentation from '@/components/QueryPanels/components/QueryRepresentation.vue';
 import ConditionRow from '@/components/QueryPanels/models/condition-row';
 import { usePerformanceObserver } from '@/composition/performance';
-import { makeSearch, makeDistinct } from '@/components/QueryPanels/workers/functions'
-import MakeSearchWorker from '@/components/QueryPanels/workers/make-search.worker.js?worker'
-import MakeDistinctWorker from '@/components/QueryPanels/workers/make-distinct.worker.js?worker'
+import { doSearch, doDistinct } from '@/components/QueryPanels/workers/functions'
+import DoSearchWorker from '@/components/QueryPanels/workers/do-search.worker.js?worker'
+import DoDistinctWorker from '@/components/QueryPanels/workers/do-distinct.worker.js?worker'
 import { createSafeWorker } from '@/workers'
 
-const makeSearchWorker = createSafeWorker(MakeSearchWorker, makeSearch)
-const makeDistinctWorker = createSafeWorker(MakeDistinctWorker, makeDistinct)
+const doSearchWorker = createSafeWorker(DoSearchWorker, doSearch)
+const doDistinctWorker = createSafeWorker(DoDistinctWorker, doDistinct)
 
 const PERF_MARK_NAME = 'select-panel';
 const {
@@ -64,16 +64,16 @@ const selectedColumns = computed({
     }
 });
 
-const sendWorkerToMakeDistinct = () => {
+const sendWorkerToDoDistinct = () => {
     startLoading();
     return new Promise((resolve) => {
         const rawData = getRawData(allData);
         const rawCols = getRawData(selectedColumns)
-        makeDistinctWorker.onmessage = (e) => {
+        doDistinctWorker.onmessage = (e) => {
             finishLoading();
             return resolve(e.data);
         }
-        makeDistinctWorker.postMessage({
+        doDistinctWorker.postMessage({
             data: rawData,
             cols: rawCols,
         });
@@ -121,26 +121,26 @@ const handleData = async () => {
     let data = getData();
     if (isDistinct.value && selectedColumns.value.length
         && displayableColumns.value.length !== allColumns.value.length) {
-        data = await measure(sendWorkerToMakeDistinct)
+        data = await measure(sendWorkerToDoDistinct)
     }
 
     if (conditions.length) {
-        data = await measure(sendWorkerToSearch)
+        data = await measure(sendWorkerDoSearch)
     }
 
     setDisplayableData(data);
 }
 
-const sendWorkerToSearch = () => {
+const sendWorkerDoSearch = () => {
     startLoading();
     return new Promise((resolve) => {
         const rawData = getRawData(allData)
         const rawConditions = toRaw(conditions)
-        makeSearchWorker.onmessage = (e) => {
+        doSearchWorker.onmessage = (e) => {
             finishLoading();
             return resolve(e.data)
         }
-        makeSearchWorker.postMessage({
+        doSearchWorker.postMessage({
             data: [...rawData],
             conditions: [...rawConditions],
         });
@@ -151,6 +151,7 @@ const resetConditions = () => {
     conditionVal.value = '';
     conditionCol.value = '';
     combinator.value = COMBINATORS.AND;
+    isInverted.value = false;
 }
 
 const addCondition = () => {

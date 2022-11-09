@@ -1,4 +1,4 @@
-export const makeDistinct = (eventData) => {
+export const doDistinct = (eventData) => {
     const { data, cols } = eventData;
     let result = [];
     const values = [];

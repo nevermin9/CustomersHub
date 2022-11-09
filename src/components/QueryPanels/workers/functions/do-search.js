@@ -1,4 +1,4 @@
-export const makeSearch = (eventData) => {
+export const doSearch = (eventData) => {
     const { data, conditions } = eventData;
 
     let result = [];
@@ -24,6 +24,9 @@ export const makeSearch = (eventData) => {
 
                 if ((!isInverted && !item[condCol].startsWith(condVal))
                     || (isInverted && item[condCol].startsWith(condVal))) {
+                    // Don't loop through next conditions,
+                    // if item don't fit at least one
+                    // continue with next item
                     continue dataLoop;
                 }
             }

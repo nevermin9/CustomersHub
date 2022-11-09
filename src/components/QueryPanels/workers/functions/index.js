@@ -1,2 +1,2 @@
-export { makeDistinct } from './make-distinct';
-export { makeSearch } from './make-search';
+export { doDistinct } from './do-distinct';
+export { doSearch } from './do-search';
