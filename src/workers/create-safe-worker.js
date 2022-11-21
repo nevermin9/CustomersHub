@@ -1,5 +1,5 @@
 const getWorkerImitator = (fn) => {
-    const worker = {
+    return {
         postMessage(data) {
             const result = fn(data);
 
@@ -15,8 +15,6 @@ const getWorkerImitator = (fn) => {
 
         onmessage: null,
     };
-
-    return worker;
 }
 
 export const createSafeWorker = (workerClass, fn) => {

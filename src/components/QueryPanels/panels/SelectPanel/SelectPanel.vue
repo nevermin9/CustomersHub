@@ -17,6 +17,8 @@ import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
 import QueryRepresentation from '@/components/QueryPanels/components/QueryRepresentation.vue';
 import ConditionRow from '@/components/QueryPanels/models/condition-row';
+import InputSwitch from 'primevue/inputswitch';
+
 import { usePerformanceObserver } from '@/composition/performance';
 import { doSearch, doDistinct } from '@/components/QueryPanels/workers/functions'
 import DoSearchWorker from '@/components/QueryPanels/workers/do-search.worker.js?worker'
@@ -42,6 +44,8 @@ const {
     startLoading,
     finishLoading,
 } = inject(QUERY_PANEL_KEY);
+
+const wantUseWorkers = ref(true);
 
 const getRawData = (refValue) => {
     const rawData = JSON.parse(JSON.stringify(refValue.value));
@@ -117,15 +121,41 @@ const getData = () => {
     return allData.value;
 }
 
+const makeChoice = async (fn1, fn2, cond) => {
+    if (cond) {
+        return await fn1()
+    }
+    return await fn2()
+}
+
 const handleData = async () => {
     let data = getData();
     if (isDistinct.value && selectedColumns.value.length
         && displayableColumns.value.length !== allColumns.value.length) {
-        data = await measure(sendWorkerToDoDistinct)
+
+        data = await makeChoice(
+            async () => measure(sendWorkerToDoDistinct),
+            async () => measure(async () => doDistinct(
+                {
+                    data: getRawData(allData),
+                    cols: getRawData(selectedColumns)
+                }
+            )),
+            wantUseWorkers.value
+        )
     }
 
     if (conditions.length) {
-        data = await measure(sendWorkerDoSearch)
+        data = await makeChoice(
+            async () => measure(sendWorkerDoSearch),
+            async () => measure(async () => doSearch(
+                {
+                    data: getRawData(allData),
+                    conditions: toRaw(conditions)
+                }
+            )),
+            wantUseWorkers.value
+        )
     }
 
     setDisplayableData(data);
@@ -193,6 +223,21 @@ const clear = () => {
             :min-size="55"
             class="p-3"
         >
+            <div>
+                <p>
+                    Do you want to use workers?
+                    <span v-if="wantUseWorkers">
+                        Yes
+                    </span>
+
+                    <span v-else>
+                        No
+                    </span>
+                </p>
+
+                <InputSwitch v-model="wantUseWorkers"/>
+            </div>
+
             <form class="flex flex-column">
                 <ul class="flex flex-column gap-4">
                     <li class="flex align-items-center gap-2">
@@ -272,7 +317,7 @@ const clear = () => {
 
                             <p class="font-bold">
                                 <span>
-                                    Last operation takes: 
+                                    Last operation takes:
                                 </span>
 
                                 <span>
