@@ -315,12 +315,20 @@ const clear = () => {
                                 @click="() => addCondition()"
                             />
 
-                            <p class="font-bold">
+                            <p
+                                v-if="parseInt(measurementResult)"
+                                class="font-bold"
+                            >
                                 <span>
                                     Last operation takes:
                                 </span>
 
-                                <span>
+                                <span
+                                    :class="`${ parseInt(measurementResult) > 100 ?
+                                    'text-red-500' : parseInt(measurementResult) > 10 ?
+                                    'text-yellow-500' : 'text-green-500'
+                                    }`"
+                                >
                                     {{ measurementResult }}
                                 </span>
                             </p>
