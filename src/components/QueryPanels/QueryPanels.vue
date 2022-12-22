@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import SelectPanel from './panels/SelectPanel/SelectPanel.vue';

@@ -1,4 +1,12 @@
-const getWorkerImitator = (fn) => {
+interface IWebWorker {
+    postMessage: (data: any) => void,
+    terminate: () => void
+    onmessage: null | ( (data: any) => void )
+}
+
+type WorkerImitatorCreator = (fn: (data: any) => any) => IWebWorker;
+
+const getWorkerImitator: WorkerImitatorCreator = (fn) => {
     return {
         postMessage(data) {
             const result = fn(data);
@@ -17,7 +25,7 @@ const getWorkerImitator = (fn) => {
     };
 }
 
-export const createSafeWorker = (workerClass, fn) => {
+export const createSafeWorker = (workerClass: any, fn: any) => {
     if (window.Worker) {
         return new workerClass();
     }

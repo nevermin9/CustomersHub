@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { QUERY_PANEL_KEY } from '@/components/QueryPanels/config'
 import {
     computed,
