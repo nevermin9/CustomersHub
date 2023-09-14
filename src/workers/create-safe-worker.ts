@@ -25,7 +25,7 @@ const getWorkerImitator: WorkerImitatorCreator = (fn) => {
     };
 }
 
-export const createSafeWorker = (workerClass: any, fn: any) => {
+export const createSafeWorker = (workerClass: any, fn: (data: any) => any) => {
     if (window.Worker) {
         return new workerClass();
     }

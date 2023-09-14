@@ -1,8 +1,10 @@
 import { ref, onScopeDispose } from 'vue';
 
 export const usePerformanceObserver = (name, type = 'measure', format = true) => {
-    let observer = null
-    const result = ref('0ms')
+    let observer: PerformanceObserver | null;
+
+    const result = ref<string>('0ms')
+
     const setResult = (entry) => {
         if (!format) {
             result.value = entry.duration

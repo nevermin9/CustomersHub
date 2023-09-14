@@ -1,0 +1,12 @@
+/*
+FADE
+ */
+.fade-30-enter-active,
+.fade-30-leave-active {
+  transition: opacity .3s;
+}
+
+.fade-30-enter-from,
+.fade-30-leave-to {
+  opacity: 30%;
+}
