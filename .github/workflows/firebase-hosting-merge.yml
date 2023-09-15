@@ -15,7 +15,7 @@ jobs:
         with:
           version: 7.19.0
           run_install: true
-      - run: npm i -g pnpm && pnpm i && pnpm run build
+      - run: pnpm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
